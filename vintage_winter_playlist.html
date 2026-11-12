@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Winter Vinyl</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Special+Elite&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap');
+
+  :root {
+    --bg: #1a1410;
+    --card: #241c16;
+    --ink: #edd9b8;
+    --fade: #a89070;
+    --gold: #d2b15a;
+    --rust: #a33b2c;
+    --line: rgba(210,177,90,0.18);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Source Serif 4', Georgia, serif;
+    color: var(--ink);
+    min-height: 100vh;
+    background:
+      radial-gradient(ellipse 120% 80% at 50% -10%, rgba(140,80,35,0.22), transparent 50%),
+      radial-gradient(ellipse at 100% 100%, rgba(80,25,15,0.15), transparent 40%),
+      var(--bg);
+  }
+
+  /* grain */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.045;
+    z-index: 2;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* garland */
+  .garland {
+    position: fixed;
+    top: 0; left: 0; width: 100%;
+    height: clamp(52px, 7.5vw, 72px);
+    z-index: 20;
+    pointer-events: none;
+  }
+  .garland svg { width: 100%; height: 100%; display: block; }
+  .garland .wire { fill: none; stroke: #3f3428; stroke-width: 2; stroke-linecap: round; opacity: 0.9; }
+  .garland .cap { fill: #5c4d38; }
+  .garland .shine { fill: rgba(255,255,255,0.35); }
+  .garland .c-red   { animation: pR 2.9s ease-in-out infinite; }
+  .garland .c-gold  { animation: pG 2.9s ease-in-out infinite .4s; }
+  .garland .c-green { animation: pN 2.9s ease-in-out infinite .8s; }
+  .garland .c-blue  { animation: pB 2.9s ease-in-out infinite 1.2s; }
+  @keyframes pR { 0%,100%{fill:#5c1814;filter:drop-shadow(0 0 1px #5c1814)} 45%,55%{fill:#ff3f32;filter:drop-shadow(0 0 7px #ff3f32)} }
+  @keyframes pG { 0%,100%{fill:#5c4a14;filter:drop-shadow(0 0 1px #5c4a14)} 45%,55%{fill:#ffd045;filter:drop-shadow(0 0 7px #ffd045)} }
+  @keyframes pN { 0%,100%{fill:#164828;filter:drop-shadow(0 0 1px #164828)} 45%,55%{fill:#35d866;filter:drop-shadow(0 0 7px #35d866)} }
+  @keyframes pB { 0%,100%{fill:#143d5c;filter:drop-shadow(0 0 1px #143d5c)} 45%,55%{fill:#45aaff;filter:drop-shadow(0 0 7px #45aaff)} }
+
+  /* snow */
+  .flake {
+    position: fixed;
+    top: -20px;
+    color: #fff;
+    pointer-events: none;
+    z-index: 15;
+    animation: fall linear infinite;
+    text-shadow: 0 0 5px rgba(255,255,255,.4);
+    opacity: .55;
+  }
+  @keyframes fall {
+  from { transform: translateY(0); }
+  to   { transform: translateY(110vh) rotate(420deg); }
+  }
+
+  .page {
+    position: relative;
+    z-index: 5;
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 64px 18px 70px;
+  }
+
+  /* title */
+  .hero {
+    text-align: center;
+    margin-bottom: 34px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid var(--line);
+  }
+  .hero h1 {
+    font-family: 'Great Vibes', cursive;
+    font-size: clamp(3.8rem, 10vw, 5.8rem);
+    color: #f2e0a8;
+    line-height: 1.05;
+    text-shadow:
+      0 0 12px rgba(242,224,168,.55),
+      0 0 36px rgba(210,177,90,.28),
+      0 3px 8px rgba(0,0,0,.5);
+  }
+  .hero .tag {
+    margin-top: 12px;
+    font-family: 'Special Elite', monospace;
+    font-size: .92rem;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    color: var(--fade);
+  }
+
+  /* layout */
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 290px;
+    gap: 22px;
+    align-items: start;
+  }
+  @media (max-width: 800px) {
+    .grid { grid-template-columns: 1fr; }
+    .deck { position: relative !important; top: 0 !important; }
+  }
+
+  /* track list */
+  .shelf {
+    background: linear-gradient(180deg, #2a211a 0%, #201812 100%);
+    border: 1px solid var(--line);
+    box-shadow: 0 14px 40px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,230,180,.04);
+  }
+
+  .row {
+    display: grid;
+    grid-template-columns: 28px 48px 1fr;
+    gap: 12px;
+    align-items: center;
+    padding: 10px 12px;
+    border-bottom: 1px solid rgba(210,177,90,.07);
+    cursor: pointer;
+    transition: background .15s;
+  }
+  .row:last-child { border-bottom: none; }
+  .row:hover { background: rgba(210,177,90,.05); }
+  .row.on { background: rgba(163,59,44,.2); }
+
+  .row .n {
+    font-family: 'Special Elite', monospace;
+    font-size: .78rem;
+    color: #8a7340;
+    text-align: right;
+  }
+  .row img {
+    width: 48px; height: 48px;
+    object-fit: cover;
+    border-radius: 2px;
+    background: #333;
+    box-shadow: 0 2px 6px rgba(0,0,0,.35);
+  }
+  .row .ttl {
+    font-size: .97rem;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .row.on .ttl { color: var(--gold); }
+  .row .art {
+    font-size: .84rem;
+    color: var(--fade);
+    margin-top: 2px;
+  }
+
+  /* player */
+  .deck {
+    background: linear-gradient(165deg, #2c221b, #1e1712);
+    border: 1px solid var(--line);
+    padding: 20px 16px 16px;
+    position: sticky;
+    top: 16px;
+    box-shadow: 0 16px 36px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,230,180,.05);
+  }
+
+  .platter {
+    width: 190px;
+    height: 190px;
+    margin: 0 auto 16px;
+    position: relative;
+  }
+  .disc {
+    width: 100%; height: 100%;
+    border-radius: 50%;
+    background:
+      radial-gradient(circle at center, #151515 0 15%, transparent 15.5%),
+      repeating-radial-gradient(circle at center, #0c0c0c 0 1.4px, #171717 1.4px 2.8px);
+    box-shadow:
+      0 0 0 5px #252525,
+      0 0 0 6px #3a3a3a,
+      0 10px 24px rgba(0,0,0,.55);
+  }
+  .disc.go { animation: spin 9.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .hub {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 72px; height: 72px;
+    margin: -36px 0 0 -36px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid #8a7340;
+    background: #3a2a20;
+    display: grid;
+    place-items: center;
+  }
+  .hub img { width: 100%; height: 100%; object-fit: cover; }
+  .hub span { color: var(--gold); font-size: 1.3rem; }
+
+  .now {
+    text-align: center;
+    min-height: 50px;
+    margin-bottom: 14px;
+  }
+  .now .t {
+    font-family: 'Special Elite', monospace;
+    font-size: 1.02rem;
+    color: var(--gold);
+    line-height: 1.3;
+  }
+  .now .a {
+    margin-top: 4px;
+    font-size: .88rem;
+    color: var(--fade);
+  }
+
+  .btns {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+  .btns button {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    background: transparent;
+    color: var(--gold);
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    transition: .15s background, .15s border-color;
+  }
+  .btns button:hover {
+    background: rgba(210,177,90,.1);
+    border-color: var(--gold);
+  }
+  .btns .go {
+    width: 52px; height: 52px;
+    background: var(--rust);
+    border-color: #8a7340;
+    color: #f3e2c4;
+  }
+  .btns .go:hover { background: #b44838; }
+
+  .scrub { margin-bottom: 12px; }
+  .rail {
+    height: 3px;
+    background: rgba(255,255,255,.08);
+    border-radius: 2px;
+    cursor: pointer;
+    overflow: hidden;
+  }
+  .knob {
+    height: 100%;
+    width: 0%;
+    background: var(--gold);
+  }
+  .clock {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 5px;
+    font-family: 'Special Elite', monospace;
+    font-size: .74rem;
+    color: var(--fade);
+  }
+
+  .loud {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .loud svg { color: var(--gold); opacity: .75; flex-shrink: 0; }
+  .loud input[type=range] {
+    flex: 1;
+    -webkit-appearance: none;
+    height: 3px;
+    background: rgba(255,255,255,.1);
+    border-radius: 2px;
+    outline: none;
+  }
+  .loud input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 12px; height: 12px;
+    background: var(--gold);
+    border-radius: 50%;
+    cursor: pointer;
+  }
+
+  .tube {
+    display: block;
+    text-align: center;
+    font-family: 'Special Elite', monospace;
+    font-size: .78rem;
+    letter-spacing: .06em;
+    color: #8a7340;
+    text-decoration: none;
+    padding: 8px;
+    border: 1px solid transparent;
+    transition: .15s color, .15s border-color;
+  }
+  .tube:hover { color: var(--gold); border-color: var(--line); }
+
+  footer {
+    margin-top: 36px;
+    text-align: center;
+    font-family: 'Special Elite', monospace;
+    font-size: .75rem;
+    color: var(--fade);
+    opacity: .65;
+    letter-spacing: .08em;
+  }
+</style>
+</head>
+<body>
+<div class="garland" id="garland"></div>
+<div id="snow"></div>
+
+<div class="page">
+  <header class="hero">
+    <h1>Winter Vinyl</h1>
+    <div class="tag">Топ 20 треков для нового года</div>
+  </header>
+
+  <div class="grid">
+    <div class="shelf" id="list"></div>
+
+    <aside class="deck">
+      <div class="platter">
+        <div class="disc" id="vinyl"></div>
+        <div class="hub" id="label"><span>♪</span></div>
+      </div>
+
+      <div class="now">
+        <div class="t" id="title">—</div>
+        <div class="a" id="artist"></div>
+      </div>
+
+      <div class="btns">
+        <button id="prev" title="Назад" aria-label="Назад">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6L18 18V6z"/></svg>
+        </button>
+        <button class="go" id="play" title="Play" aria-label="Play">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        </button>
+        <button id="next" title="Вперёд" aria-label="Вперёд">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M16 6h2v12h-2zM6 18l8.5-6L6 6z"/></svg>
+        </button>
+      </div>
+
+      <div class="scrub">
+        <div class="rail" id="bar"><div class="knob" id="fill"></div></div>
+        <div class="clock">
+          <span id="cur">0:00</span>
+          <span id="dur">0:00</span>
+        </div>
+      </div>
+
+      <div class="loud">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3a4.5 4.5 0 00-2.3-3.9v7.8A4.5 4.5 0 0016.5 12zM14 3.2v2.1a7 7 0 010 13.4v2.1a9 9 0 000-17.6z"/></svg>
+        <input type="range" id="vol" min="0" max="1" step="0.01" value="0.75">
+      </div>
+
+      <a class="tube" id="yt" href="#" target="_blank" rel="noopener">найти на youtube</a>
+    </aside>
+  </div>
+
+  <footer>Serpent_Bot Lab</footer>
+</div>
+
+<audio id="audio" preload="metadata"></audio>
+
+<script>
+const tracks = [
+  { file: "01_Last_Christmas_Taylor_Swift.mp3", title: "Last Christmas", artist: "Taylor Swift", cover: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS2zFjZF179Lsh6BcCrJJ2lD-1Cyf0caXQBlbYmsKxTAZVBEjbFFIbl1Hk&s=10", q: "Taylor+Swift+Last+Christmas" },
+  { file: "02_All_I_Want_For_Christmas_Is_You_2.mp3", title: "All I Want For Christmas Is You", artist: "Mariah Carey", cover: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJVzuRy_FkCRF88rftHb-V12agy3MdfesaKt5HJ7TUzH5TrVoYK2YtSSYC&s=10", q: "All+I+Want+For+Christmas+Is+You" },
+  { file: "03_Happy_New_Year_ABBA.mp3", title: "Happy New Year", artist: "ABBA", cover: "https://m.media-amazon.com/images/M/MV5BNmQwMjA1NzUtMzNjMi00NzU2LWIwY2YtMTEyYmQxMWIzYzIyXkEyXkFqcGc@._V1_.jpg", q: "ABBA+Happy+New+Year" },
+  { file: "04_Let_It_Snow_Dean_Martin.mp3", title: "Let It Snow! Let It Snow!", artist: "Dean Martin", cover: "https://i.scdn.co/image/ab67616d0000b273353b1a0c33a55de18df9c500", q: "Dean+Martin+Let+It+Snow" },
+  { file: "05_Snowstorm_Echoes_of_Waltz.mp3", title: "Snowstorm Suite: Echoes of Waltz", artist: "Георгий Свиридов", cover: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQuo2T0-2JKaSzKWP3wj3q1lyvoG9DeFW7xJRw8aJ2fAg&s=10", q: "Sviridov+Snowstorm+Waltz" },
+  { file: "06_O_Children_Nick_Cave.mp3", title: "O Children", artist: "Nick Cave & The Bad Seeds", cover: "https://avatars.yandex.net/get-music-content/63210/0023f8a0.a.4334256-1/m1000x1000", q: "Nick+Cave+O+Children" },
+  { file: "09_Istochnik_LYRIQ.mp3", title: "Источник", artist: "LYRIQ, A'Studio", cover: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSi6t-3LAMAXRaCkm5bpvZV5D-igxOlRuu3TWjz94g3fSaM8YvV-dO2CmU&s=10", q: "LYRIQ+Источник" },
+  { file: "10_Have_Yourself_Frank_Sinatra.mp3", title: "Have Yourself a Merry Little Christmas", artist: "Frank Sinatra", cover: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSGnF6CL3k5zqWqR1UtAqJqPx0pwBwSFzm1hVyP_JipU_Mciv0MIENYaLG4&s=10", q: "Frank+Sinatra+Have+Yourself+a+Merry+Little+Christmas" },
+  { file: "11_Sleigh_Ride_Ella_Fitzgerald.mp3", title: "Sleigh Ride", artist: "Ella Fitzgerald", cover: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQBUq9yzX2uaUwlAJVgLtAzU-fNbOuwZ7GlPa1mMEiisz0dgSSFAhobj5E&s=10", q: "Ella+Fitzgerald+Sleigh+Ride" },
+  { file: "12_Carol_Of_The_Bells.mp3", title: "Carol of the Bells", artist: "Choir of Canterbury Cathedral", cover: "https://yt3.googleusercontent.com/KTGg6sS-hT8L8TzMkl4SMG0gw_QeO81ktyVj2VUIsLLD52gHhSz2Y03PRrD15ND2v7BNlg2JptOwWIM=w544-h544-l90-rj", q: "Carol+of+the+Bells" },
+  { file: "13_Los_Angeles_The_Midnight.mp3", title: "Los Angeles", artist: "The Midnight", cover: "https://images.unsplash.com/photo-1519501025264-65ba15a82390?w=300&h=300&fit=crop", q: "The+Midnight+Los+Angeles" },
+  { file: "15_Rockin_Around_Brenda_Lee.mp3", title: "Rockin' Around the Christmas Tree", artist: "Brenda Lee", cover: "https://thecircle.de/cdn/shop/files/Brenda-Lee_Rockin-Around-The-Christmas-Tree-The-Decca-Christmas-Recordings_LP-Coloured-Baby-Pink-Vinyl_s509739_o5329640_a474216_v12207977.d4541d61.jpg?v=1747997423", q: "Brenda+Lee+Rockin+Around+the+Christmas+Tree" },
+  { file: "16_White_Christmas_Bing_Crosby.mp3", title: "White Christmas", artist: "Bing Crosby", cover: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQyBJdILQLhxh0xV2CG6KefHAc3GRb-EiK67YGZvmi4BimypIqhXj_ORHk&s=10", q: "Bing+Crosby+White+Christmas" },
+  { file: "17_The_Christmas_Song_Nat_King_Cole.mp3", title: "The Christmas Song", artist: "Nat King Cole", cover: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSdxXx52O1sb1wJrs4TZRwnWNd7APlk6mp8aQhSlFqM8d0NkxngrmnJR9Qn&s=10", q: "Nat+King+Cole+The+Christmas+Song" },
+  { file: "18_Winter_Wonderland_Bing_Crosby.mp3", title: "Winter Wonderland", artist: "Bing Crosby", cover: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS22e0wQhIVjP2vs8RA8UKC0FVk6rp1uQNfbnh9ivcgbxtrt7T_kUOoRzz7&s=10", q: "Bing+Crosby+Winter+Wonderland" },
+  { file: "19_Jingle_Bell_Rock_Bobby_Helms.mp3", title: "Jingle Bell Rock", artist: "Bobby Helms", cover: "https://cdn-images.dzcdn.net/images/cover/444410c5e26fd7cabaad337eeab568f6/500x500.jpg", q: "Bobby+Helms+Jingle+Bell+Rock" },
+  { file: "21_Most_Wonderful_Time_Andy_Williams.mp3", title: "It's the Most Wonderful Time of the Year", artist: "Andy Williams", cover: "https://i.scdn.co/image/ab67616d0000b273bc5b8079eaec602335cc6e5d", q: "Andy+Williams+Most+Wonderful+Time" },
+  { file: "25_Holly_Jolly_Christmas_Burl_Ives.mp3", title: "A Holly Jolly Christmas", artist: "Burl Ives", cover: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNAk1fjJjxBT1Og2LnoZIRK5GHUcZ0MVwHnrkt6MpqGA&s=10", q: "Burl+Ives+Holly+Jolly+Christmas" },
+  { file: "27_Last_Christmas_Wham.mp3", title: "Last Christmas", artist: "Wham!", cover: "https://images.genius.com/f9680e3c876e1466fa1d240e8b7609c9.1000x1000x1.png", q: "Wham+Last+Christmas" },
+  { file: "30_Snowman_Sia.mp3", title: "Snowman", artist: "Sia", cover: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ0_boGe_p95fVnOR7WLT9Lb2ZfGK-OJ7BILxzZGe0K2OYf59Ll6d9iWG6j&s=10", q: "Sia+Snowman" }
+];
+
+const audio = document.getElementById('audio');
+const vinyl = document.getElementById('vinyl');
+const label = document.getElementById('label');
+const titleEl = document.getElementById('title');
+const artistEl = document.getElementById('artist');
+const fill = document.getElementById('fill');
+const cur = document.getElementById('cur');
+const dur = document.getElementById('dur');
+const playBtn = document.getElementById('play');
+const yt = document.getElementById('yt');
+const list = document.getElementById('list');
+
+const iconPlay = '<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
+const iconPause = '<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M6 5h4v14H6zm8 0h4v14h-4z"/></svg>';
+
+let idx = -1;
+let playing = false;
+
+function fmt(s) {
+  if (!isFinite(s)) return '0:00';
+  const m = Math.floor(s / 60);
+  const sec = Math.floor(s % 60);
+  return m + ':' + String(sec).padStart(2, '0');
+}
+
+function render() {
+  list.innerHTML = tracks.map((t, i) => `
+    <div class="row" data-i="${i}">
+      <div class="n">${String(i + 1).padStart(2, '0')}</div>
+      <img src="${t.cover}" alt="" loading="lazy">
+      <div>
+        <div class="ttl">${t.title}</div>
+        <div class="art">${t.artist}</div>
+      </div>
+    </div>
+  `).join('');
+  list.querySelectorAll('.row').forEach(el => {
+    el.addEventListener('click', () => load(+el.dataset.i, true));
+  });
+}
+
+function load(i, autoplay) {
+  idx = i;
+  const t = tracks[i];
+  list.querySelectorAll('.row').forEach(el => el.classList.toggle('on', +el.dataset.i === i));
+  titleEl.textContent = t.title;
+  artistEl.textContent = t.artist;
+  label.innerHTML = '<img src="' + t.cover + '" alt="">';
+  yt.href = 'https://www.youtube.com/results?search_query=' + t.q;
+  audio.src = 'music/' + t.file;
+  audio.load();
+  fill.style.width = '0%';
+  cur.textContent = '0:00';
+  dur.textContent = '0:00';
+  if (autoplay) play();
+}
+
+function play() {
+  audio.play().then(() => {
+    playing = true;
+    playBtn.innerHTML = iconPause;
+    vinyl.classList.add('go');
+  }).catch(() => {
+    playing = false;
+    playBtn.innerHTML = iconPlay;
+    vinyl.classList.remove('go');
+  });
+}
+
+function pause() {
+  audio.pause();
+  playing = false;
+  playBtn.innerHTML = iconPlay;
+  vinyl.classList.remove('go');
+}
+
+playBtn.addEventListener('click', () => {
+  if (idx < 0) { load(0, true); return; }
+  playing ? pause() : play();
+});
+document.getElementById('next').addEventListener('click', () => load((idx + 1) % tracks.length, true));
+document.getElementById('prev').addEventListener('click', () => load((idx - 1 + tracks.length) % tracks.length, true));
+
+audio.addEventListener('timeupdate', () => {
+  if (!audio.duration) return;
+  fill.style.width = (audio.currentTime / audio.duration * 100) + '%';
+  cur.textContent = fmt(audio.currentTime);
+});
+audio.addEventListener('loadedmetadata', () => { dur.textContent = fmt(audio.duration); });
+audio.addEventListener('ended', () => load((idx + 1) % tracks.length, true));
+audio.addEventListener('error', pause);
+
+document.getElementById('bar').addEventListener('click', e => {
+  if (!audio.duration) return;
+  const r = e.currentTarget.getBoundingClientRect();
+  audio.currentTime = ((e.clientX - r.left) / r.width) * audio.duration;
+});
+document.getElementById('vol').addEventListener('input', e => { audio.volume = e.target.value; });
+
+/* garland */
+(function () {
+  const g = document.getElementById('garland');
+  if (!g) return;
+  const colors = ['c-red', 'c-gold', 'c-green', 'c-blue'];
+  function q(x1,y1,cx,cy,x2,y2,t) {
+    const u = 1 - t;
+    return { x: u*u*x1 + 2*u*t*cx + t*t*x2, y: u*u*y1 + 2*u*t*cy + t*t*y2 };
+  }
+  function build() {
+    const w = Math.max(window.innerWidth, 320);
+    const h = Math.round(Math.min(72, Math.max(52, w * 0.065)));
+    const arcsN = w < 520 ? 2 : (w < 900 ? 3 : 4);
+    const bulbsN = w < 520 ? 6 : (w < 900 ? 8 : 10);
+    const margin = w * 0.015;
+    const seg = (w - margin * 2) / arcsN;
+    const sag = h * 0.55;
+    const arcs = [];
+    for (let i = 0; i < arcsN; i++) {
+      const x1 = margin + seg * i, x2 = margin + seg * (i + 1);
+      const y = h * 0.12;
+      arcs.push({ x1, y1: y, cx: (x1 + x2) / 2, cy: y + sag, x2, y2: y });
+    }
+    let svg = `<svg viewBox="0 0 ${w} ${h}" width="100%" height="100%" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">`;
+    arcs.forEach(a => {
+      svg += `<path class="wire" d="M${a.x1.toFixed(1)} ${a.y1.toFixed(1)} Q ${a.cx.toFixed(1)} ${a.cy.toFixed(1)} ${a.x2.toFixed(1)} ${a.y2.toFixed(1)}" />`;
+    });
+    const s = h / 70;
+    let bi = 0;
+    arcs.forEach(a => {
+      for (let i = 1; i <= bulbsN; i++) {
+        const p = q(a.x1, a.y1, a.cx, a.cy, a.x2, a.y2, i / (bulbsN + 1));
+        const cls = colors[bi++ % 4];
+        const topW = 7.5 * s, midW = 5.2 * s, len = 16 * s, capH = 3.2 * s;
+        svg += `<g transform="translate(${p.x.toFixed(2)},${(p.y + 1.4*s).toFixed(2)})">
+          <rect class="cap" x="${(-topW*0.34).toFixed(2)}" y="${(-capH-0.4*s).toFixed(2)}" width="${(topW*0.68).toFixed(2)}" height="${capH.toFixed(2)}" rx="${(0.45*s).toFixed(2)}" />
+          <path class="${cls}" d="M ${(-topW/2).toFixed(2)} 0 C ${(-topW/2).toFixed(2)} ${(len*0.25).toFixed(2)}, ${(-midW/2).toFixed(2)} ${(len*0.55).toFixed(2)}, 0 ${len.toFixed(2)} C ${(midW/2).toFixed(2)} ${(len*0.55).toFixed(2)}, ${(topW/2).toFixed(2)} ${(len*0.25).toFixed(2)}, ${(topW/2).toFixed(2)} 0 Z" />
+          <ellipse class="shine" cx="${(-1.05*s).toFixed(2)}" cy="${(2.1*s).toFixed(2)}" rx="${(1.05*s).toFixed(2)}" ry="${(1.9*s).toFixed(2)}" />
+        </g>`;
+      }
+    });
+    svg += '</svg>';
+    g.innerHTML = svg;
+    g.style.height = h + 'px';
+  }
+  build();
+  let t;
+  window.addEventListener('resize', () => { clearTimeout(t); t = setTimeout(build, 80); });
+})();
+
+/* snow */
+(function () {
+  const box = document.getElementById('snow');
+  const glyphs = ['❄', '❅', '·', '✦'];
+  for (let i = 0; i < 200; i++) {
+  const f = document.createElement('div');
+  f.className = 'flake';
+  f.textContent = glyphs[i % glyphs.length];
+  f.style.left = Math.random() * 100 + 'vw';
+  // НЕ ставь f.style.top
+  f.style.fontSize = (0.5 + Math.random() * 1.1) + 'em';
+  const dur = 10 + Math.random() * 14;
+  f.style.animationDuration = dur + 's';
+  // отрицательная задержка = уже падает с случайной высоты
+  f.style.animationDelay = (-Math.random() * dur) + 's';
+  f.style.opacity = 0.22 + Math.random() * 0.5;
+  box.appendChild(f);
+}
+  
+})();
+
+render();
+load(0, false);
+</script>
+</body>
+</html>
